@@ -22,7 +22,7 @@ This README is an end‑to‑end guide: **project structure → local developmen
 - [Deploy to Render (Single Web Service)](#deploy-to-render-single-web-service)
   - [Render Build Command](#render-build-command)
   - [Render Start Command](#render-start-command)
-  - [Render DEPLOYED LINK ](#render-deployed-link)
+  - [Render DEPLOYED LINK ](#render-deployed-link-of-this-project)
   - [Render Environment Variables](#render-environment-variables)
 - [Assumptions](#assumptions)
 - [Troubleshooting](#troubleshooting)
