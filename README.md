@@ -1,6 +1,6 @@
 # Calendly Clone
 
-A full-stack Calendly-inspired scheduling platform built for the Scaler SDE Intern assignment.
+A full-stack Calendly-inspired scheduling platform 
 
 ## Stack
 
