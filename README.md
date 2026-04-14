@@ -123,7 +123,7 @@ This repo is configured so FastAPI serves the production React build. That means
 ## Assumptions
 
 - No authentication is required; the app uses a seeded default admin user.
-- The admin-side pages are intentionally modeled after Calendly’s layout patterns from the assignment and screenshots.
+- The admin-side pages are intentionally modeled after Calendly’s layout patterns from the original website.
 - Email and SMS workflow pages are represented visually and structurally, but real third-party delivery integrations are mocked.
 - Rescheduling support is partially modeled in the schema and API through status handling and seeded examples, while the main mandatory user flow focuses on booking and cancellation.
 
