@@ -41,7 +41,7 @@ This README is an end‑to‑end guide: **project structure → local developmen
 
 - **Frontend:** React + Vite (Node/npm)
 - **Backend:** FastAPI + Uvicorn (Python)
-- **ORM / DB access:** SQLAlchemy
+- **DB access:** SQL
 - **Database:**
   - Designed for **MySQL** (production-ready schema)
   - Supports **SQLite fallback** for quick local demos
@@ -49,21 +49,80 @@ This README is an end‑to‑end guide: **project structure → local developmen
 
 ---
 
+## Implemented Features
+
+- Event type management with create, edit, delete, custom slug, duration, location, and buffers
+- Weekly availability management with timezone support
+- Date-specific availability overrides
+- Public booking page with calendar view, available time slots, invitee form, and booking confirmation
+- Double-booking prevention using live slot generation against existing meetings
+- Meetings page with upcoming/past separation and cancellation flow
+- Seeded sample event types, meetings, contacts, workflows, integrations, analytics, and admin data
+- Calendly-style admin shell with Scheduling, Meetings, Availability, Contacts, Workflows, Integrations, Analytics, and Admin Center views
+- Responsive layouts for desktop, tablet, and mobile
+
+
 ## Project Structure
 
 ```text
 .
-├── backend/
-│   ├── app/
-│   ├── requirements.txt
-│   ├── .env.example
-│   └── ...
-├── frontend/
-│   ├── src/
-│   ├── package.json
-│   ├── .env.example
-│   └── ...
-└── README.md
+├── README.md                        # Main end-to-end documentation (this file)
+├── render.yaml                      # Render deployment blueprint (build/start commands + env vars)
+├── netlify.toml                     # Netlify config (present in repo; not used for the Render flow)
+│
+├── backend/                         # FastAPI backend (API + serves frontend build in production)
+│   ├── .env                         # Local backend env file (do not commit secrets)
+│   ├── .env.example                 # Sample backend env vars
+│   ├── requirements.txt             # Python dependencies
+│   ├── calendly_clone.db            # SQLite DB file used for local/demo mode
+│   │
+│   └── app/
+│       ├── __init__.py
+│       ├── main.py                  # FastAPI app entrypoint (uvicorn app.main:app)
+│       ├── db.py                    # Database engine/session setup
+│       ├── models.py                # SQLAlchemy models (schema/entities)
+│       ├── schemas.py               # Pydantic schemas (request/response DTOs)
+│       ├── services.py              # Business logic (slot generation, booking rules, etc.)
+│       ├── seed.py                  # Seed/demo data loader
+│       ├── routes_admin.py          # Admin APIs (dashboard, event types, availability, meetings, etc.)
+│       ├── routes_public.py         # Public booking APIs (public page, slots, booking, confirmations)
+│       │
+│       └── core/
+│           └── config.py            # Central config (loads env vars, defaults like timezone)
+│
+└── frontend/                        # React + Vite frontend (UI)
+    ├── .env                         # Local frontend env vars (e.g., VITE_API_URL for dev)
+    ├── .env.example                 # Sample frontend env vars
+    ├── .gitignore
+    ├── index.html                   # Vite HTML entry
+    ├── vite.config.js               # Vite configuration
+    ├── eslint.config.js             # ESLint config
+    ├── package.json                 # Frontend dependencies + scripts
+    ├── package-lock.json            # Locked dependency tree
+    ├── README.md                    # Default Vite template readme (can be removed/trimmed if desired)
+    │
+    ├── public/
+    │   ├── favicon.svg
+    │   └── icons.svg
+    │
+    └── src/
+        ├── main.jsx                 # React entrypoint (mounts <App />)
+        ├── App.jsx                  # Main app UI / routing / pages composition
+        ├── App.css
+        ├── index.css
+        │
+        ├── assets/                  # Images/SVGs used by the UI
+        │   ├── hero.png
+        │   ├── react.svg
+        │   └── vite.svg
+        │
+        ├── components/              # Reusable UI components
+        │   ├── AdminLayout.jsx
+        │   └── EventTypeModal.jsx
+        │
+        └── lib/                     # Frontend helper utilities
+            ├── api.js               # API client (calls backend; reads VITE_API_URL in dev)
+            └── format.js            # Formatting helpers (dates/times, etc.)
 ```
 
 ---
@@ -80,6 +139,13 @@ This README is an end‑to‑end guide: **project structure → local developmen
 
 ### Backend (`backend/.env`)
 
+
+powershell
+cd backend
+copy .env.example .env
+.\venv\Scripts\pip install -r requirements.txt
+.\venv\Scripts\uvicorn app.main:app --reload
+
 Create `backend/.env` from `backend/.env.example`.
 
 #### SQLite (easy local run)
@@ -89,13 +155,33 @@ If your `.env` was pointing to MySQL and the API crashed on startup, switch it t
 DATABASE_URL=sqlite:///./calendly_clone.db
 ```
 
-#### MySQL (optional)
+#### MySQL 
 
 ```env
 DATABASE_URL=mysql+pymysql://USER:PASSWORD@HOST:3306/calendly_clone
 ```
+The backend runs at
+```env
+ http://127.0.0.1:8000.
+```
 
 ### Frontend (`frontend/.env`)
+
+The frontend runs at 
+``` env
+http://localhost:5173.
+```
+
+## MySQL Configuration
+
+The schema is designed to run on MySQL using SQLAlchemy with PyMySQL.
+
+Example:
+
+```env
+DATABASE_URL=mysql+pymysql://root:password@localhost:3306/calendly_clone
+```
+
 
 Create `frontend/.env` from `frontend/.env.example`.
 
@@ -194,7 +280,7 @@ This repo can be deployed as **one Render Web Service** where:
 
 ### Render Build Command
 
-Use the build command (as in the screenshot):
+Use the build command:
 
 ```bash
 cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt
@@ -210,13 +296,15 @@ cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
 Set at least:
 
-- `DATABASE_URL` (MySQL in production is recommended; SQLite can work for small demos)
+- `DATABASE_URL` 
 
 Optional (if your backend uses them):
 
-- `APP_NAME`
-- `FRONTEND_URL`
-- `DEFAULT_TIMEZONE`
+- `APP_NAME=Calendly Clone API`
+- `FRONTEND_URL=http://localhost:5173`
+- `DEFAULT_TIMEZONE=Asia/Kolkata`
+- `DATABASE_URL=sqlite:///./calendly_clone.db`
+
 
 Also ensure:
 
@@ -231,6 +319,10 @@ Also ensure:
 - App may ship with seeded/demo admin data (no full auth flow required for evaluation).
 - Email/SMS workflow pages are represented structurally; third‑party integrations may be mocked.
 - For a quick local run, SQLite is acceptable; for production-like behavior, prefer MySQL.
+- No authentication is required; the app uses a seeded default admin user.
+- The admin-side pages are intentionally modeled after Calendly’s layout patterns from the original website.
+- Email and SMS workflow pages are represented visually and structurally, but real third-party delivery integrations are mocked.
+- Rescheduling support is partially modeled in the schema and API through status handling and seeded examples, while the main mandatory user flow focuses on booking and cancellation.
 
 ---
 
@@ -256,6 +348,3 @@ DATABASE_URL=sqlite:///./calendly_clone.db
 
 ---
 
-If you still hit issues locally, share:
-- backend terminal output after running `uvicorn ... --reload`
-- frontend terminal output after `npm run dev`
