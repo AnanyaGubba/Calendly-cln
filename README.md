@@ -69,7 +69,6 @@ This README is an end‑to‑end guide: **project structure → local developmen
 .
 ├── README.md                        # Main end-to-end documentation (this file)
 ├── render.yaml                      # Render deployment blueprint (build/start commands + env vars)
-├── netlify.toml                     # Netlify config (present in repo; not used for the Render flow)
 │
 ├── backend/                         # FastAPI backend (API + serves frontend build in production)
 │   ├── .env                         # Local backend env file (do not commit secrets)
