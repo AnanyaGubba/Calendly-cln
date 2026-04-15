@@ -141,12 +141,11 @@ This README is an end‑to‑end guide: **project structure → local developmen
 
 
 powershell
-```cd backend```
-copy ```.env.example .env```
-.\venv\Scripts\
-```pip install -r requirements.txt```
-.\venv\Scripts\
-```uvicorn app.main:app --reload```
+- ```cd backend```
+
+- ```pip install -r requirements.txt```
+
+- ```uvicorn app.main:app --reload```
 
 Create `backend/.env` from `backend/.env.example`.
 
