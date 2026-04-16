@@ -1,4 +1,4 @@
-# 📅 Calendly Clone – Implementation Plan
+#  Calendly Clone – Implementation Plan
 
 ##  Project Overview
 
@@ -41,7 +41,7 @@ users (1) ────────< event_types (many)
 
 ![ER Diagram](docs/assets/ER-diagram.png)
 
-![ER Diagram](docs/assets/scheduling application.png)
+![ER Diagram](docs/assets/scheduling-application.png)
 
 
 ###  Key Relationships
