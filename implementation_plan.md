@@ -29,15 +29,6 @@ This system replicates the core idea of scheduling platforms like Calendly, wher
 The system follows a **user-centric relational database design**.
 
 ### ER Relationship Structure
-users (1) ────────< event_types (many)
-│ │
-│ └──────< meetings (many)
-│
-├────────────< contacts (many)
-├────────────< availability_rules (many)
-├────────────< availability_overrides (many)
-├────────────< workflows (many)
-└────────────< integrations (many)
 
 ![ER Diagram](docs/assets/ER-diagram.png)
 
@@ -247,7 +238,7 @@ Stores external service connections.
 
 ---
 
-## ⚙️ Tech Stack (Typical for this project)
+##  Tech Stack (Typical for this project)
 
 Based on repository structure and common implementation:
 
@@ -276,8 +267,6 @@ Based on repository structure and common implementation:
 - Meeting lifecycle tracking
 - Workflow automation
 - Third-party integrations
-
-These features align with standard scheduling systems that automate booking and reduce manual coordination. :contentReference[oaicite:1]{index=1}
 
 ---
 
