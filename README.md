@@ -74,6 +74,7 @@ This README is an end‑to‑end guide: **project structure → local developmen
 │   ├── .env                         # Local backend env file (do not commit secrets)
 │   ├── .env.example                 # Sample backend env vars
 │   ├── requirements.txt             # Python dependencies
+├   |── database_structure.db        # clear mention of tables and demo data
 │   ├── calendly_clone.db            # SQLite DB file used for local/demo mode
 │   │
 │   └── app/
