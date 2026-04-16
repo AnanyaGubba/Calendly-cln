@@ -69,6 +69,10 @@ This README is an end‑to‑end guide: **project structure → local developmen
 .
 ├── README.md                        # Main end-to-end documentation (this file)
 ├── render.yaml                      # Render deployment blueprint (build/start commands + env vars)
+├── docs
+│   ├── assets                       # the diagrammatic visual of database used
+|
+├── implementation_plan.md           # end-to-end workflow of the execution of this project   
 │
 ├── backend/                         # FastAPI backend (API + serves frontend build in production)
 │   ├── .env                         # Local backend env file (do not commit secrets)
