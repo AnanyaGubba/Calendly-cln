@@ -1,0 +1,141 @@
+-- USERS
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(120) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    title VARCHAR(120) NOT NULL,
+    timezone VARCHAR(80) NOT NULL,
+    avatar_initials VARCHAR(4) NOT NULL,
+    bio TEXT NOT NULL
+);
+
+-- EVENT TYPES
+CREATE TABLE event_types (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    name VARCHAR(140) NOT NULL,
+    slug VARCHAR(160) NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    color VARCHAR(20) NOT NULL,
+    location VARCHAR(120) NOT NULL,
+    duration_minutes INTEGER NOT NULL,
+    is_active BOOLEAN NOT NULL,
+    buffer_before_minutes INTEGER NOT NULL,
+    buffer_after_minutes INTEGER NOT NULL,
+    created_at DATETIME NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- MEETINGS
+CREATE TABLE meetings (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    event_type_id INTEGER NOT NULL,
+    invitee_name VARCHAR(120) NOT NULL,
+    invitee_email VARCHAR(255) NOT NULL,
+    starts_at DATETIME NOT NULL,
+    ends_at DATETIME NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    notes TEXT NOT NULL,
+    cancellation_reason TEXT NOT NULL,
+    confirmation_code VARCHAR(32) NOT NULL UNIQUE,
+    created_at DATETIME NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(event_type_id) REFERENCES event_types(id)
+);
+
+-- CONTACTS
+CREATE TABLE contacts (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    company VARCHAR(120) NOT NULL,
+    job_title VARCHAR(120) NOT NULL,
+    last_meeting_at DATETIME,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- AVAILABILITY RULES
+CREATE TABLE availability_rules (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    weekday INTEGER NOT NULL,
+    is_available BOOLEAN NOT NULL,
+    start_time TIME,
+    end_time TIME,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- AVAILABILITY OVERRIDES
+CREATE TABLE availability_overrides (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    date DATE NOT NULL,
+    is_available BOOLEAN NOT NULL,
+    start_time TIME,
+    end_time TIME,
+    label VARCHAR(120) NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- WORKFLOWS
+CREATE TABLE workflows (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    description TEXT NOT NULL,
+    trigger_type VARCHAR(80) NOT NULL,
+    is_enabled BOOLEAN NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- INTEGRATIONS
+CREATE TABLE integrations (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    category VARCHAR(80) NOT NULL,
+    description TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+
+CREATE INDEX ix_users_id ON users(id);
+CREATE UNIQUE INDEX ix_users_email ON users(email);
+
+CREATE INDEX ix_event_types_id ON event_types(id);
+CREATE UNIQUE INDEX ix_event_types_slug ON event_types(slug);
+
+CREATE INDEX ix_meetings_id ON meetings(id);
+CREATE INDEX ix_meetings_starts_at ON meetings(starts_at);
+CREATE INDEX ix_meetings_invitee_email ON meetings(invitee_email);
+CREATE UNIQUE INDEX ix_meetings_confirmation_code ON meetings(confirmation_code);
+
+CREATE INDEX ix_availability_rules_weekday ON availability_rules(weekday);
+CREATE INDEX ix_availability_overrides_date ON availability_overrides(date);
+
+
+-- USER
+INSERT INTO users VALUES (
+1,
+'Ananya Gubba',
+'ananya@example.com',
+'Software Engineer',
+'Asia/Kolkata',
+'AG',
+'AI help teams streamline hiring loops, discovery calls, and product syncs.'
+);
+
+-- EVENT TYPES
+INSERT INTO event_types VALUES
+(1,1,'15 Minute Intro Call','ananya-intro-call','Quick introduction for prospects or referrals.','#0f766e','Phone Call',15,1,0,0,'2026-04-14'),
+(2,1,'45 Minute Strategy Session','ananya-strategy-session','Collaborative strategy meeting.','#2563eb','Zoom',45,1,0,0,'2026-04-14'),
+(3,1,'30 Minute Meeting','ananya-30min','Focused one-on-one meeting.','#8b5cf6','Google Meet',30,1,0,0,'2026-04-14');
+
+-- MEETINGS
+INSERT INTO meetings VALUES
+(1,1,3,'Daniel Jones','daniel@magnolia.com','2026-04-15 04:30:00','2026-04-15 05:00:00','scheduled','Discuss onboarding flow','','conf1234abcd','2026-04-14'),
+(2,1,2,'Miguel Padilla','miguel@wooly.com','2026-04-12 04:30:00','2026-04-12 05:15:00','completed','Quarterly roadmap planning','','conf5678efgh','2026-04-14'),
+(3,1,1,'Kathryn Irving','kathryn@magnolia.com','2026-04-19 04:30:00','2026-04-19 05:00:00','rescheduled','Rescheduled from Monday','','conf9012ijkl','2026-04-14');
